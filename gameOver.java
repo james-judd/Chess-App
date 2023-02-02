@@ -8,13 +8,13 @@ public class gameOver {
             }
             System.out.println("Congratulations, " + colour + " won by checkmate!");
         }
-        if (stalemate){
+        else if (stalemate){
             System.out.println("Draw by stalemate");
         }
-        if (repetition){
+        else if (repetition){
             System.out.println("Draw by threefold repetition");
         }
-        if (moveRule){
+        else{
             System.out.println("Draw by the 50 move rule");
         }
         System.exit(0);

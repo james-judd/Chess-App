@@ -8,9 +8,7 @@ class Queen extends AbstractPiece {
         if (isWhite){
             return("QUEEN");
         }
-        else{
-            return("queen");
-        }
+        return("queen");
     }
 
     boolean canMoveToTarget(int[] start, int[] end, Board chessboard){

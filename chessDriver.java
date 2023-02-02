@@ -15,9 +15,9 @@ class chessDriver{
             chessboard.printBoard();
             // System.out.println(chessboard.boardString);
             int[] start = Input.takeStart(chessboard);
-            int[] end = Input.takeInput(false);
-            if (chessboard.canMoveToTarget(start, end, chessboard)){
-                if (chessboard.hasLineOfSight(start, end)){
+            int[] end = Input.takeInput(false);   
+            if (chessboard.canMoveToTarget(start, end, chessboard)){ 
+                if (chessboard.hasLineOfSight(start, end)){ 
                     chessboard.movePiece(start, end);
                     if (repetitions.containsKey(chessboard.boardString)){
                         repetitions.put(chessboard.boardString, repetitions.get(chessboard.boardString) + 1);

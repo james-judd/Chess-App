@@ -8,9 +8,7 @@ class Bishop extends AbstractPiece {
         if (isWhite){
             return("BISHOP");
         }
-        else{
-            return("bishop");
-        }
+        return("bishop");
     }
 
     boolean canMoveToTarget(int[] start, int[] end, Board chessboard){

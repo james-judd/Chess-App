@@ -1,6 +1,7 @@
 class Board {
     public AbstractPiece[][] board = new AbstractPiece[8][8];
     public String boardString;
+    public int moveNum = 1;
     public int moveRule = 0;
 
     public Board(){
@@ -67,51 +68,65 @@ class Board {
         return (board[start[0]][start[1]].canMoveToTarget(start, end, chessboard));
     }
 
-    public boolean hasLineOfSight(int[] start, int[] end){
-        if (start[0] == end[0]){
-            int minCol = Math.min(start[1], end[1]) + 1;
-            int maxCol = Math.max(start[1], end[1]);
-            while (minCol < maxCol){
-                if (board[start[0]][minCol] != null){
-                    return (false);
+    public boolean hasLineOfSight(int[] start, int[] end){            
+        if (!(board[start[0]][start[1]] instanceof Knight)){
+            if (start[0] == end[0]){
+                int minCol = Math.min(start[1], end[1]) + 1;
+                int maxCol = Math.max(start[1], end[1]);
+                while (minCol < maxCol){
+                    if (board[start[0]][minCol] != null){
+                        return (false);
+                    }
+                    minCol++;
                 }
-                minCol++;
             }
-        }
-        else if (start[1] == end[1]){
-            int minRow = Math.min(start[0], end[0]) + 1;
-            int maxRow = Math.max(start[0], end[0]);
-            while (minRow < maxRow){
-                if (board[minRow][start[1]] != null){
-                    return (false);
+            else if (start[1] == end[1]){
+                int minRow = Math.min(start[0], end[0]) + 1;
+                int maxRow = Math.max(start[0], end[0]);
+                while (minRow < maxRow){
+                    if (board[minRow][start[1]] != null){
+                        return (false);
+                    }
+                    minRow++;
                 }
-                minRow++;
             }
-        }
-        else{
-            int rowIterate = (end[0] - start[0]) / Math.abs(end[0] - start[0]);
-            int colIterate = (end[1] - start[1]) / Math.abs(end[1] - start[1]);
-            start[0] += rowIterate;
-            start[1] += colIterate;
-            while (start[0] != end[0]){
-                if (board[start[0]][start[1]] != null){
-                    return (false);
+            else{
+                int rowIterate = (end[0] - start[0]) / Math.abs(end[0] - start[0]);
+                int colIterate = (end[1] - start[1]) / Math.abs(end[1] - start[1]);
+                int row = start[0] + rowIterate;
+                int col = start[1] + colIterate;
+                while (row != end[0]){
+                    if (board[row][col] != null){
+                        return (false);
+                    }
+                    row += rowIterate;
+                    col += colIterate;
                 }
-                start[0] += rowIterate;
-                start[1] += colIterate;
             }
-        }
+        }            
         return (true);
     }
 
-    public void movePiece(int[] start, int[] end){
+    public void movePiece(int[] start, int[] end){  
         moveRule++;
-        if ((board[start[0]][start[1]] instanceof Pawn) || board[end[0]][end[1]] != null){
+        if (board[end[0]][end[1]] != null){
             moveRule = 0;
+        }
+        if (board[start[0]][start[1]] instanceof Pawn){
+            moveRule = 0;
+            if (end[0] == start[0] + 2 || end[0] == start[0] - 2){
+                board[start[0]][start[1]].doubleMoveTurn = moveNum;
+            }
+            else if (start[1] != end[1] && board[start[0]][end[1]] instanceof Pawn){
+                if (board[start[0]][end[1]].doubleMoveTurn == moveNum - 1){
+                    board[start[0]][end[1]] = null;
+                }
+            }
         }
         board[end[0]][end[1]] = board[start[0]][start[1]];
         board[start[0]][start[1]] = null;
         boardString = toString();
+        moveNum++;
     }
 
     public boolean checkmate(boolean whiteTurn){

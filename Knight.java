@@ -8,9 +8,7 @@ class Knight extends AbstractPiece {
         if (isWhite){
             return("KNIGHT");
         }
-        else{
-            return("knight");
-        }
+        return("knight");
     }
 
     boolean canMoveToTarget(int[] start, int[] end, Board chessboard){
