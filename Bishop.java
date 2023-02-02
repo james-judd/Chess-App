@@ -1,21 +1,22 @@
 class Bishop extends AbstractPiece {
 
-    Bishop(boolean white){
-        isWhite = white;
+    Bishop(boolean whiteBool){
+        isWhite = whiteBool;
     }
 
-    @Override
-    public String toString(){
-        return ("Bishop ");
+    @Override public String toString(){
+        if (isWhite){
+            return("BISHOP");
+        }
+        else{
+            return("bishop");
+        }
     }
 
-    // boolean canMoveToTarget(Square current, Square target){
-    //     if (target.row != current.row || target.column != current.column){
-    //         if (Math.abs(target.row - current.row) == Math.abs(target.column - current.column){
-    //             //Implement line-of-sight
-    //             return (true);
-    //         }
-    //     }
-    //     return (false);
-    // }
+    boolean canMoveToTarget(int[] start, int[] end, Board chessboard){
+        if (Math.abs(end[0] - start[0]) == Math.abs(end[1] - start[1])){
+            return (true);
+        }
+        return (false);
+    }
 }

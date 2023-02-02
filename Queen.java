@@ -1,21 +1,22 @@
 class Queen extends AbstractPiece {
 
-    Queen(boolean white){
-        isWhite = white;
+    Queen(boolean whiteBool){
+        isWhite = whiteBool;
     }
 
-    @Override
-    public String toString(){
-        return ("Queen  ");
+    @Override public String toString(){
+        if (isWhite){
+            return("QUEEN");
+        }
+        else{
+            return("queen");
+        }
     }
 
-    // boolean canMoveToTarget(Square target){
-    //     if (target.row != current.row || target.column != current.column){
-    //         if (target.row == current.row || target.column == current.column || Math.abs(target.row - current.row) == Math.abs(target.column - current.column){
-    //             //Implement line-of-sight
-    //             return (true);
-    //         }
-    //     }
-    //     return (false);
-    // }
+    boolean canMoveToTarget(int[] start, int[] end, Board chessboard){
+        if (start[0] == end[0] || start[1] == end[1] || Math.abs(end[0] - start[0]) == Math.abs(end[1] - start[1])){
+            return (true);
+        }
+        return (false);
+    }
 }
