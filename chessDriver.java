@@ -11,10 +11,10 @@ class chessDriver{
         boolean stalemate = false;
         boolean repetition = false;
         boolean moveRule = false;
+        chessboard.printBoard();
         while (!(checkmate || stalemate || repetition || moveRule)){
-            chessboard.printBoard();
             // System.out.println(chessboard.boardString);
-            int[] start = Input.takeStart(chessboard);
+            int[] start = chessboard.choosePiece(whiteTurn);
             int[] end = Input.takeInput(false);   
             if (chessboard.canMoveToTarget(start, end, chessboard)){ 
                 if (chessboard.hasLineOfSight(start, end)){ 
@@ -35,7 +35,16 @@ class chessDriver{
                         moveRule = true;
                     }
                 }
+                else{
+                    System.out.println("Piece is blocked, try again");
+                    continue;
+                }
             }
+            else{
+                System.out.println("Piece cannot move there, try again");
+                continue;
+            }
+            chessboard.printBoard();
         }
         chessboard.printBoard();
         new gameOver(whiteTurn, checkmate, stalemate, repetition, moveRule);

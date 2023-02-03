@@ -37,6 +37,11 @@ class Pawn extends AbstractPiece {
         if ((start[1] + 1 == end[1] || start[1] - 1 == end[1]) && start[0] + move == end[0]){
             if (chessboard.board[end[0]][end[1]] != null){
                 System.out.println("C");
+                if (chessboard.board[end[0]][end[1]] != null){
+                    if (chessboard.board[end[0]][end[1]].isWhite == isWhite){
+                        return (false);
+                    }
+                }
                 return (true);
             }
             if (chessboard.board[start[0]][end[1]] instanceof Pawn){
@@ -44,8 +49,11 @@ class Pawn extends AbstractPiece {
                     System.out.println("D");
                     System.out.println(chessboard.board[start[0]][end[1]].doubleMoveTurn);
                     System.out.println(chessboard.moveNum);
-                    return (true);
+                    if (chessboard.board[start[0]][end[1]].isWhite == isWhite){
+                        return (false);
+                    }
                 }
+                return (true);
             }
         }
         return (false);

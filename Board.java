@@ -64,6 +64,15 @@ class Board {
         System.out.println();
     }
 
+    public int[] choosePiece(boolean whiteTurn){
+        int[] input = Input.takeInput(true);
+        while (board[input[0]][input[1]] == null || board[input[0]][input[1]].isWhite != whiteTurn){
+                System.out.println("Invalid piece, try again");
+                input = Input.takeInput(true);
+            }
+        return (input);
+    }
+
     public boolean canMoveToTarget(int[] start, int[] end, Board chessboard){      
         return (board[start[0]][start[1]].canMoveToTarget(start, end, chessboard));
     }
@@ -122,11 +131,36 @@ class Board {
                     board[start[0]][end[1]] = null;
                 }
             }
+            if (end[0] == 7){
+                promotePawn(start, true);
+            }
+            else if (end[0] == 0){
+                promotePawn(start, false);
+            }
         }
         board[end[0]][end[1]] = board[start[0]][start[1]];
         board[start[0]][start[1]] = null;
         boardString = toString();
         moveNum++;
+    }
+
+    public void promotePawn(int[] start, boolean isWhite){
+        String input = null;
+        System.out.println("Promotion options:  1) Queen  2) Rook  3) Bishop  4) Knight");
+        System.out.print("Choose promotion: ");
+        input = System.console().readLine();
+        if (input.equals("1") || input.toLowerCase().equals("queen")){
+            board[start[0]][start[1]] = new Queen(isWhite);
+        }
+        else if (input.equals("2") || input.toLowerCase().equals("rook")){
+            board[start[0]][start[1]] = new Rook(isWhite);
+        }
+        else if (input.equals("3") || input.toLowerCase().equals("bishop")){
+            board[start[0]][start[1]] = new Bishop(isWhite);
+        }
+        else{
+            board[start[0]][start[1]] = new Knight(isWhite);
+        }
     }
 
     public boolean checkmate(boolean whiteTurn){

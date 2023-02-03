@@ -1,18 +1,9 @@
 public class Input{
-    
-    public static int[] takeStart(Board chessboard){
-        int[] input = Input.takeInput(true);
-        while (chessboard.board[input[0]][input[1]] == null){
-                System.out.println("There's no piece there");
-                input = Input.takeInput(true);
-            }
-        return (input);
-    }
 
     public static int[] takeInput(boolean isStart){
         int[] input = parseInput(isStart);
         while (input[0] < 0 || input[0] > 7 || input[1] < 0 || input[1] > 7){
-            System.out.println("Out of bounds");
+            System.out.println("Out of bounds, try again");
             input = parseInput(isStart);
         }
         return (input);
@@ -27,6 +18,16 @@ public class Input{
             System.out.print("Target square: ");
         }
         String inString = System.console().readLine();
+        if (inString.length() != 2){
+            System.out.println("Invalid input, try again");
+            if (isStart == true){
+                System.out.print("Starting square: ");
+            }
+            else{
+                System.out.print("Target square: ");
+            }
+            inString = System.console().readLine();
+        }
         switch (Character.toUpperCase(inString.charAt(0))){
             case 'A':
                 input[1] = 0;

@@ -15,6 +15,11 @@ class King extends AbstractPiece {
         System.out.println(Math.abs(end[0] - start[0]));
         System.out.println(Math.abs(end[1] - start[1]));
         if (Math.abs(end[0] - start[0]) <= 1 && Math.abs(end[1] - start[1]) <= 1){
+            if (chessboard.board[end[0]][end[1]] != null){
+                if (chessboard.board[end[0]][end[1]].isWhite == isWhite){
+                    return (false);
+                }
+            }
             return (true);
         }
         return (false);
