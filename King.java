@@ -2,7 +2,15 @@ class King extends AbstractPiece {
     
     King(boolean whiteBool){
         isWhite = whiteBool;
-        adjacentAttacked = new boolean[8][8];
+        hasMoved = false;
+        adjacentAttacked = new boolean[3][5];
+    }
+
+    void setHasMoved(){
+        hasMoved = true;
+    }
+    boolean getHasMoved(){
+        return (hasMoved);
     }
 
     @Override public String toString(){
@@ -17,7 +25,7 @@ class King extends AbstractPiece {
         int relativeCol = end[1] - start[1];
         if (start[0] != end[0] || start[1] != end[1]){
             if (Math.abs(relativeRow) <= 1 && Math.abs(relativeCol) <= 1){
-                if (!adjacentAttacked[relativeRow + 1][relativeCol + 1]){
+                if (!adjacentAttacked[relativeRow + 1][relativeCol + 2]){
                     return (true);
                 }
             }

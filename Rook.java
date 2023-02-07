@@ -2,6 +2,7 @@ class Rook extends AbstractPiece {
 
     Rook(boolean whiteBool){
         isWhite = whiteBool;
+        hasMoved = false;
     }
 
     @Override public String toString(){

@@ -10,7 +10,7 @@ class Board {
     public int[] blackKing = {7, 4};
     int[] checker = null;
 
-    public Board(){
+    Board(){
         board[0][0] = board[0][7] = new Rook(true);
         board[0][1] = board[0][6] = new Knight(true);
         board[0][2] = board[0][5] = new Bishop(true);
@@ -46,7 +46,7 @@ class Board {
         return (str);
     }
 
-    public void printBoard(){
+    void printBoard(){
         System.out.println();
         for (int row = 7; row >= 0; row--){
             System.out.print((row + 1) + "      ");
@@ -71,14 +71,14 @@ class Board {
         System.out.println();
     }
 
-    public int[] getKing(){
+    int[] getKing(){
         if (whiteTurn){
             return (whiteKing);
         }
         return (blackKing);
     }
 
-    public int[] choosePiece(){
+    int[] choosePiece(){
         int[] input = Input.takeInput(true);
         while (!isTurnColour(input)){
                 System.out.println("Invalid piece, try again");
@@ -87,7 +87,7 @@ class Board {
         return (input);
     }
 
-    public boolean isTurnColour(int[] square){
+    boolean isTurnColour(int[] square){
         if (board[square[0]][square[1]] != null){
             if (board[square[0]][square[1]].isWhite == whiteTurn){
                 return (true);
@@ -96,7 +96,7 @@ class Board {
         return (false);
     }
 
-    public boolean canMoveToTarget(int[] start, int[] end){
+    boolean canMoveToTarget(int[] start, int[] end){
         if (!(board[start[0]][start[1]] instanceof King) && checker != null){
             if (Arrays.equals(checker, new int[]{-1, -1})){
                 return (false);
@@ -117,7 +117,7 @@ class Board {
         return (board[start[0]][start[1]].inRange(start, end));
     }
 
-    public boolean isSquareBetweenKing(int[] square, int[] attacker){
+    boolean isSquareBetweenKing(int[] square, int[] attacker){
         int[] king = getKing();
         if (!(board[attacker[0]][attacker[1]] instanceof Knight) && Math.abs(square[0] - king[0]) != Math.abs(square[1] - king[1]) && Math.abs(square[0] - king[0]) != 0 && Math.abs(square[1] - king[1]) != 0){
             return (false);
@@ -147,7 +147,7 @@ class Board {
         return (false);
     }
 
-    public boolean inPawnRange(int[] start, int[] end){
+    boolean inPawnRange(int[] start, int[] end){
         int startRow = 1;
         int move = 1;
         if (!whiteTurn){
@@ -180,7 +180,31 @@ class Board {
         return (false);
     }
 
-    public int[] lineOfSight(int[] start, int[] end){    
+    boolean isValidCastle(int[] king, int[] end){
+        int[] rook = {0,0};
+        int colIterate = -1;
+        if (Math.abs(end[1] - king[1]) >= 2){
+            if (!whiteTurn){
+                rook[0] = 7;
+            }
+            if (end[1] > king[1]){
+                rook[1] = 7;
+                colIterate = 1;
+            }
+        }
+        else{
+            return (false);
+        }
+        if (board[king[0]][king[1]] instanceof King && board[rook[0]][rook[1]] instanceof Rook ){
+            if (board[rook[0]][rook[1]].isWhite == whiteTurn && checker == null && !board[king[0]][king[1]].getAdjacentSquare(1, 2 + colIterate) && 
+            !board[king[0]][king[1]].getAdjacentSquare(1, 2 + 2 * colIterate) && !board[king[0]][king[1]].getHasMoved() && !board[rook[0]][rook[1]].getHasMoved() && Arrays.equals(lineOfSight(king, rook), new int[2])){
+                return (true);
+            }
+        }
+        return (false);
+    }
+
+    int[] lineOfSight(int[] start, int[] end){    
         int[] pinned = new int[2];  
         if (!(board[start[0]][start[1]] instanceof Knight)){
             if (Math.abs(end[0] - start[0]) != Math.abs(end[1] - start[1]) && Math.abs(end[0] - start[0]) != 0 && Math.abs(end[1] - start[1]) != 0){
@@ -218,12 +242,46 @@ class Board {
         return (pinned);
     }
 
-    public void movePiece(int[] start, int[] end){  
+    void movePiece(int[] start, int[] end){  
         moveRule++;
-        if (board[end[0]][end[1]] != null){
-            moveRule = 0;
+        if (board[start[0]][start[1]] instanceof King){
+            if (Math.abs(end[1] - start[1]) >= 2){
+                int[] rook = {0,0};
+                int[] rookEnd = {0,3};
+                int[] kingEnd = {0,2};
+                if (end[1] > start[1]){
+                    rook[1] = 7;
+                    rookEnd[1] = 5;
+                    kingEnd[1] = 6;
+                }
+                if (whiteTurn){
+                    whiteKing = kingEnd;
+                }
+                else{
+                    rook[0] = 7;
+                    rookEnd[0] = 7;
+                    kingEnd[0] = 7;
+                    blackKing = kingEnd;
+                }
+                board[kingEnd[0]][kingEnd[1]] = board[start[0]][start[1]];
+                board[rookEnd[0]][rookEnd[1]] = board[rook[0]][rook[1]];
+                board[kingEnd[0]][kingEnd[1]].setHasMoved();
+                board[rookEnd[0]][rookEnd[1]].setHasMoved();
+                board[start[0]][start[1]] = null;
+                board[rook[0]][rook[1]] = null;
+                boardString = toString();
+                moveNum++;
+                whiteTurn = !whiteTurn;
+                return;
+            }
+            if (whiteTurn){
+                whiteKing = end;
+            }
+            else{
+                blackKing = end;                
+            }
         }
-        if (board[start[0]][start[1]] instanceof Pawn){
+        else if (board[start[0]][start[1]] instanceof Pawn){
             moveRule = 0;
             if (end[0] == start[0] + 2 || end[0] == start[0] - 2){
                 board[start[0]][start[1]].setDoubleMoveTurn(moveNum);
@@ -235,23 +293,18 @@ class Board {
                 promotePawn(start);
             }
         }
-        else if (board[start[0]][start[1]] instanceof King){
-            if (whiteTurn){
-                whiteKing[0] = end[0];
-                whiteKing[1] = end[1];
-            }
-            else{
-                blackKing[0] = end[0];
-                blackKing[1] = end[1];                
-            }
+        if (board[end[0]][end[1]] != null){
+            moveRule = 0;
         }
         board[end[0]][end[1]] = board[start[0]][start[1]];
+        board[end[0]][end[1]].setHasMoved();
         board[start[0]][start[1]] = null;
         boardString = toString();
         moveNum++;
+        whiteTurn = !whiteTurn;
     }
 
-    public void promotePawn(int[] start){
+    void promotePawn(int[] start){
         String input = null;
         System.out.println("Promotion options:  1) Queen  2) Rook  3) Bishop  4) Knight");
         System.out.print("Choose promotion: ");
@@ -270,22 +323,21 @@ class Board {
         }
     }
 
-    public boolean checkmate(){
+    void checkmate(){
         checker = inCheck();
         if (checker != null){
             int[] king = getKing();
             for (int rowAdj = 0; rowAdj < 3; rowAdj++){
-                for (int colAdj = 0; colAdj < 3; colAdj++){
+                for (int colAdj = 1; colAdj < 4; colAdj++){
                     if (!board[king[0]][king[1]].getAdjacentSquare(rowAdj, colAdj)){
                         System.out.println("Check!");
-                        return (false);
+                        return;
                     }
                 }
             }
             int[] doubleCheck = {-1, -1};
             if (Arrays.equals(checker, doubleCheck)){
-                System.out.println("Checkmate!");
-                return (true);
+                gameOver(true, false, false, false);
             }
             int rowIterate = 0;
             int colIterate = 0;
@@ -305,7 +357,7 @@ class Board {
                             int[] end = {blockRow, blockCol};
                             if (canMoveToTarget(start, end) && Arrays.equals(lineOfSight(start, end), new int[2])){
                                 System.out.println("Check!");
-                                return (false);
+                                return;
                             }
                             if (board[checker[0]][checker[1]] instanceof Knight){
                                 break;
@@ -318,13 +370,11 @@ class Board {
                     }
                 }
             }
-            System.out.println("Checkmate!");
-            return (true);
-        }
-        return (false);                
+            gameOver(true, false, false, false);
+        }              
     }
 
-    public int[] inCheck(){
+    int[] inCheck(){
         checker = null;
         int[] king = getKing();
         for (int row = 0; row < 8; row++){
@@ -334,13 +384,13 @@ class Board {
                 }
             }
         }
-        board[king[0]][king[1]].setAdjacentAttacked(new boolean[8][8]);
+        board[king[0]][king[1]].setAdjacentAttacked(new boolean[3][5]);
         for (int rowAdj = 0; rowAdj < 3; rowAdj++){
-            for (int colAdj = 0; colAdj < 3; colAdj++){
-                if (rowAdj == 1 && colAdj == 1){
+            for (int colAdj = 0; colAdj < 5; colAdj++){
+                if (rowAdj == 1 && colAdj == 2){
                     continue;
                 }
-                int[] square = {king[0] + rowAdj - 1, king[1] + colAdj - 1};
+                int[] square = {king[0] + rowAdj - 1, king[1] + colAdj - 2};
                 if (square[0] >= 0 && square[0] < 8 && square[1] >= 0 && square[1] < 8){
                     if (isTurnColour(square)){
                         board[king[0]][king[1]].setAdjacentSquare(rowAdj, colAdj, true);
@@ -356,17 +406,17 @@ class Board {
                 if (board[row][col] != null){
                     if (board[row][col].isWhite != whiteTurn){
                         for (int rowAdj = 0; rowAdj < 3; rowAdj++){
-                            for (int colAdj = 0; colAdj < 3; colAdj++){
-                                if (!board[king[0]][king[1]].getAdjacentSquare(rowAdj, colAdj) || (rowAdj == 1 && colAdj == 1)){
+                            for (int colAdj = 0; colAdj < 5; colAdj++){
+                                if (!board[king[0]][king[1]].getAdjacentSquare(rowAdj, colAdj) || (rowAdj == 1 && colAdj == 2)){
                                     int[] start = {row, col};
-                                    int[] end = {king[0] + rowAdj - 1, king[1] + colAdj - 1};
+                                    int[] end = {king[0] + rowAdj - 1, king[1] + colAdj - 2};
                                     if (end[0] >= 0 && end[0] < 8 && end[1] >= 0 && end[1] < 8){
                                         if (!(board[row][col] instanceof Pawn)){
                                             if (board[row][col].inRange(start, end)){
                                                 int[] pinned = lineOfSight(start, end);
                                                 if (Arrays.equals(pinned, new int[2])){
                                                     board[king[0]][king[1]].setAdjacentSquare(rowAdj, colAdj, true);
-                                                    if (rowAdj == 1 && colAdj == 1){
+                                                    if (rowAdj == 1 && colAdj == 2){
                                                         if (checker == null){
                                                             checker = start;
                                                         }
@@ -376,7 +426,7 @@ class Board {
                                                         }
                                                     }
                                                 }
-                                                else if (pinned != null && rowAdj == 1 && colAdj == 1){
+                                                else if (pinned != null && rowAdj == 1 && colAdj == 2){
                                                     board[pinned[0]][pinned[1]].setPinner(start);
                                                 }
                                             }
@@ -388,7 +438,7 @@ class Board {
                                             }
                                             if ((col + 1 == end[1] || col - 1 == end[1]) && row + move == end[0]){
                                                 board[king[0]][king[1]].setAdjacentSquare(rowAdj, colAdj, true);
-                                                if (rowAdj == 1 && colAdj == 1){
+                                                if (rowAdj == 1 && colAdj == 2){
                                                     if (checker == null){
                                                         checker = start;
                                                     }
@@ -410,7 +460,7 @@ class Board {
         return (checker);
     }
 
-    public boolean canMove(int[] start){
+    boolean canMove(int[] start){
         if (board[start[0]][start[1]] instanceof Knight){
             if (board[start[0]][start[1]].getPinner() == null){
                 int[] rows = {-2, -2, -1, -1, 1, 1, 2, 2};
@@ -440,22 +490,21 @@ class Board {
         return (false);
     }
 
-    public boolean stalemate(){
+    void stalemate(){
         for (int row = 0; row < 8; row++){
             for (int col = 0; col < 8; col++){
                 int[] start = {row, col};
                 if (isTurnColour(start)){
                     if (canMove(start)){
-                        return (false);
+                        return;
                     }
                 }
             }
         }
-        System.out.println("Stalemate");
-        return (true);
+        gameOver(false, true, false, false);
     }
 
-    public void gameOver (boolean checkmate, boolean stalemate, boolean repetition, boolean moveRule){
+    void gameOver (boolean checkmate, boolean stalemate, boolean repetition, boolean moveRule){
         if (checkmate){
             String colour = "white";
             if (whiteTurn){

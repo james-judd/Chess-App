@@ -7,36 +7,28 @@ class chessDriver{
         HashMap<String, Integer> repetitions = new HashMap<>(){{
             put(chessboard.boardString, 1);
         }};
-        boolean checkmate = false;
-        boolean stalemate = false;
-        boolean repetition = false;
+        boolean threefold = false;
         boolean moveRule = false;
         chessboard.printBoard();
-        while (!(checkmate || stalemate || repetition || moveRule)){
+        while (!(threefold || moveRule)){
             int[] start = chessboard.choosePiece();
             int[] end = Input.takeInput(false);
-            if (!chessboard.isTurnColour(end) && chessboard.canMoveToTarget(start, end)){
-                if (Arrays.equals(chessboard.lineOfSight(start, end), new int[2])){ 
-                    chessboard.movePiece(start, end);
-                    if (repetitions.containsKey(chessboard.boardString)){
-                        repetitions.put(chessboard.boardString, repetitions.get(chessboard.boardString) + 1);
-                    }
-                    else{
-                        repetitions.put(chessboard.boardString, 1);
-                    }
-                    chessboard.whiteTurn = !chessboard.whiteTurn;
-                    checkmate = chessboard.checkmate();
-                    stalemate = chessboard.stalemate();
-                    if (repetitions.get(chessboard.boardString) == 3){
-                        repetition = true;
-                    }
-                    if (chessboard.moveRule == 100){
-                        moveRule = true;
-                    }
+            if (chessboard.isValidCastle(start, end) || 
+            (!chessboard.isTurnColour(end) && chessboard.canMoveToTarget(start, end) && Arrays.equals(chessboard.lineOfSight(start, end), new int[2]))){
+                chessboard.movePiece(start, end);
+                if (repetitions.containsKey(chessboard.boardString)){
+                    repetitions.put(chessboard.boardString, repetitions.get(chessboard.boardString) + 1);
                 }
                 else{
-                    System.out.println("Piece is blocked, try again");
-                    continue;
+                    repetitions.put(chessboard.boardString, 1);
+                }
+                chessboard.checkmate();
+                chessboard.stalemate();
+                if (repetitions.get(chessboard.boardString) == 3){
+                    threefold = true;
+                }
+                if (chessboard.moveRule == 100){
+                    moveRule = true;
                 }
             }
             else{
@@ -45,6 +37,6 @@ class chessDriver{
             }
             chessboard.printBoard();
         }
-        chessboard.gameOver(checkmate, stalemate, repetition, moveRule);
+        chessboard.gameOver(false, false, threefold, moveRule);
     }
 }
