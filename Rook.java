@@ -13,14 +13,11 @@ class Rook extends AbstractPiece {
         }
     }
 
-    boolean canMoveToTarget(int[] start, int[] end, Board chessboard){
-        if (start[0] == end[0] || start[1] == end[1]){
-            if (chessboard.board[end[0]][end[1]] != null){
-                if (chessboard.board[end[0]][end[1]].isWhite == isWhite){
-                    return (false);
-                }
+    boolean inRange(int[] start, int[] end){
+        if (start[0] != end[0] || start[1] != end[1]){
+            if (start[0] == end[0] || start[1] == end[1]){
+                return (true);
             }
-            return (true);
         }
         return (false);
     }

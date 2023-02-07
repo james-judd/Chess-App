@@ -1,7 +1,8 @@
 class King extends AbstractPiece {
-
+    
     King(boolean whiteBool){
         isWhite = whiteBool;
+        adjacentAttacked = new boolean[8][8];
     }
 
     @Override public String toString(){
@@ -11,16 +12,15 @@ class King extends AbstractPiece {
         return("king");
     }
 
-    boolean canMoveToTarget(int[] start, int[] end, Board chessboard){
-        System.out.println(Math.abs(end[0] - start[0]));
-        System.out.println(Math.abs(end[1] - start[1]));
-        if (Math.abs(end[0] - start[0]) <= 1 && Math.abs(end[1] - start[1]) <= 1){
-            if (chessboard.board[end[0]][end[1]] != null){
-                if (chessboard.board[end[0]][end[1]].isWhite == isWhite){
-                    return (false);
+    boolean inRange(int[] start, int[] end){
+        int relativeRow = end[0] - start[0];
+        int relativeCol = end[1] - start[1];
+        if (start[0] != end[0] || start[1] != end[1]){
+            if (Math.abs(relativeRow) <= 1 && Math.abs(relativeCol) <= 1){
+                if (!adjacentAttacked[relativeRow + 1][relativeCol + 1]){
+                    return (true);
                 }
             }
-            return (true);
         }
         return (false);
     }

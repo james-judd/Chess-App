@@ -11,16 +11,16 @@ public class Input{
 
     public static int[] parseInput(boolean isStart){
         int[] input = new int[2];
-        if (isStart == true){
+        if (isStart){
             System.out.print("Starting square: ");
         }
         else{
             System.out.print("Target square: ");
         }
         String inString = System.console().readLine();
-        if (inString.length() != 2){
+        while (inString.length() != 2){
             System.out.println("Invalid input, try again");
-            if (isStart == true){
+            if (isStart){
                 System.out.print("Starting square: ");
             }
             else{
