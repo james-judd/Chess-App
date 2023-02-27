@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Arrays;
 
-class chessDriver{
+class ChessDriver{
     public static void main(String[] args){
         Board chessboard = new Board();
         HashMap<String, Integer> repetitions = new HashMap<>(){{
